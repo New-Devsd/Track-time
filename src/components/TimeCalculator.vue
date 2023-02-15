@@ -52,7 +52,7 @@
                   cols="12"
                   sm="4"
                 >
-                  <v-text-field label="Manual Time" type="time" v-model="lunchManualTime" :disabled="hideLunchManualTime"></v-text-field>
+                  <v-text-field label="Manual Time" type="text" v-model="lunchManualTime" :disabled="hideLunchManualTime" placeholder="Minutes"></v-text-field>
                 </v-col>
               </v-row>
               <v-row class="mb-2">
@@ -91,15 +91,15 @@
                   cols="12"
                   sm="3"
                 >
-                  <v-text-field label="First Break Manual Time" type="time" v-model="firstBreakManualTime" :disabled="hideFirstBreakManualTime"></v-text-field>
+                  <v-text-field label="First Manual Time" type="text" v-model="firstBreakManualTime" :disabled="hideFirstBreakManualTime" placeholder="Minutes"></v-text-field>
                 </v-col>
                 <v-col
                   class="d-flex"
                   cols="12"
                   sm="1"
                 >
-                  <v-icon color="red" class="mb-3" @click="removeFirst">
-                    mdi-minus-circle
+                  <v-icon color="red" class="mb-4" @click="removeFirst">
+                    mdi-delete
                   </v-icon>
                 </v-col>
               </v-row>
@@ -124,15 +124,15 @@
                   cols="12"
                   sm="3"
                 >
-                  <v-text-field label="Second Break Manual Time" type="time" v-model="secondBreakManualTime" :disabled="hideSecondBreakManualTime"></v-text-field>
+                  <v-text-field label="Second Manual Time" type="text" v-model="secondBreakManualTime" :disabled="hideSecondBreakManualTime" placeholder="Minutes"></v-text-field>
                 </v-col>
                 <v-col
                   class="d-flex"
                   cols="12"
                   sm="1"
                 >
-                  <v-icon color="red" class="mb-3" @click="removeSecond">
-                    mdi-minus-circle
+                  <v-icon color="red" class="mb-4" @click="removeSecond">
+                    mdi-delete
                   </v-icon>
                 </v-col>
               </v-row>
@@ -154,32 +154,36 @@
               >
                 Reset
               </v-btn>
+              <v-btn color="primary" :disabled="!valid"  @click="copyTemplate">Copy Template</v-btn>
             </v-form>
           </v-card-item>
+          <v-card-text class="pb-0" v-if="totalWorkingTime" >Total Time : {{ totalTime }}</v-card-text>
           <v-footer padless>
             <v-col
               :class="totalTimeColor"
-              v-if="totalTime"
+              v-if="totalWorkingTime"
               class="my-3 rounded text-center"
               cols="12"
             >
               <h3 >
-                Your Total Time Is: {{ totalTime }} Hours
+                Your Total Working Time Is: {{ totalWorkingTime }} Hours
               </h3>
             </v-col>
           </v-footer>
+          <v-card-item v-show="totalWorkingTime" id="template">
+            <p>Day Start Time: {{ start }} AM</p>
+            <p>Lunch Time: {{ totalLunchTime }}</p>
+            <p>Break: {{ totalBreakTime }}</p>
+            <p>Day End Time: {{ end }} PM</p>
+            <p>Today's Hour On Desk: (time) {{ totalWorkingTime }}</p>
+            <p>Today's Total Hours: {{ totalTime }}</p>
+          </v-card-item>
         </v-card>
       </v-container>
     </v-main>
   </v-app>
 </template>
-<script>
-export default {
-  name: 'TimeCalculator',
-  inheritAttrs: false,
-  customOptions: {}
-}
-</script>
+
 <script setup>
 import { ref, watch, computed } from 'vue'
 import moment from 'moment'
@@ -187,10 +191,13 @@ import moment from 'moment'
 const title = ref('Track Your Time');
 const start = ref('');
 const end = ref(moment().format('HH:mm'));
+const totalWorkingTime = ref('');
+const totalBreakTime = ref('');
+const totalLunchTime = ref('');
 const totalTime = ref('');
 const lunchStart = ref(0);
 const lunchEnd = ref(0);
-const lunchManualTime = ref(0);
+const lunchManualTime = ref('');
 const totalTimeColor = ref('');
 const rules = ref([]);
 
@@ -206,7 +213,7 @@ const secondBreakStart = ref('');
 const secondBreakEnd = ref('');
 const secondBreakManualTime = ref('');
 
-const valid = computed(() => start.value.length > 0 && end.value.length > 0 && rules.value.length<1)
+const valid = computed(() => start.value.length > 0 && end.value.length > 0 && rules.value.length<1 && start.value < end.value)
 const hideLunchManualTime = computed(() => lunchStart.value.length >0 && lunchEnd.value.length >0)
 const hideFirstBreakManualTime = computed(() => firstBreakStart.value.length >0 && firstBreakEnd.value.length >0)
 const hideSecondBreakManualTime = computed(() => secondBreakStart.value.length >0 && secondBreakEnd.value.length >0)
@@ -240,6 +247,12 @@ watch(secondBreakEnd, (newValue) => {
   }
 })
 
+function copyTemplate () {
+  let textToCopy = document.getElementById('template');
+  console.log('data', textToCopy);
+  textToCopy.select()
+  document.execCommand("copy");
+}
 
 function validate() {
   let totalLunchMinute = 0;
@@ -259,22 +272,26 @@ function validate() {
   }
 
   if (lunchManualTime.value.length > 0) {
-    totalLunchMinute = getManualTimeInMinute(lunchManualTime.value);
+    totalLunchMinute = lunchManualTime.value;
   }
 
   if (firstBreakManualTime.value.length > 0) {
-    totalFirstBreakMinute = getManualTimeInMinute(firstBreakManualTime.value);
+    totalFirstBreakMinute = firstBreakManualTime.value;
   }
 
   if (secondBreakManualTime.value.length > 0) {
-    totalFirstBreakMinute = getManualTimeInMinute(secondBreakManualTime.value);
+    totalSecondBreakMinute = secondBreakManualTime.value;
   }
 
   const startTime = moment(start.value, 'hh:mm');
   const endTime = moment(end.value, 'hh:mm');
   const totalMinute = endTime.diff(startTime, 'minutes');
   const timeIs = totalMinute - totalLunchMinute - totalFirstBreakMinute - totalSecondBreakMinute;
-  totalTime.value = Math.floor(timeIs/60) + ':' + timeIs%60;
+  const allBreakTime = totalFirstBreakMinute + totalSecondBreakMinute;
+  totalBreakTime.value = Math.floor(allBreakTime/60) + ':' + allBreakTime%60;
+  totalLunchTime.value = Math.floor(totalLunchMinute/60) + ':' + totalLunchMinute%60;
+  totalWorkingTime.value = Math.floor(timeIs/60) + ':' + timeIs%60;
+  totalTime.value = Math.floor(totalMinute/60) + ':' + totalMinute%60;
   totalTimeColor.value = timeIs >= 480 ? "bg-green" : ((timeIs >= 360 && timeIs <= 479 ) ? "bg-yellow" : "bg-cyan accent-2");
 }
 
@@ -292,10 +309,10 @@ function getManualTimeInMinute (manualTime) {
 function reset() {
   start.value = '';
   end.value = '';
-  lunchStart.value = '';
-  lunchEnd.value = '';
+  lunchStart.value = 0;
+  lunchEnd.value = 0;
   lunchManualTime.value = '';
-  totalTime.value = '';
+  totalWorkingTime.value = '';
   totalTimeColor.value = '';
   removeFirst();
   removeSecond();
