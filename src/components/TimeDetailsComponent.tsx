@@ -6,18 +6,22 @@ import {
   RestoreOutlined,
 } from '@mui/icons-material';
 import {
+  Alert,
   Button,
+  CircularProgress,
   Grid,
   IconButton,
+  Snackbar,
   TextField,
   Typography
 } from '@mui/material';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { saveLocalTime } from '../store/reducer';
 import { LocalizationProvider, TimeField } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
+import ReactDOM from 'react-dom';
 
 interface TimeRow {
   startTime: Dayjs | null;
@@ -122,12 +126,46 @@ const TimeDetailsComponent: React.FC = () => {
     setEndTime(null)
   }
 
+  const [loading, setLoading] = useState(false)
+  const [openMessage, setOpenMessage] = useState(false)
+
+  const [htmlContent, setHtmlContent] = useState('');
+  const timeRef = useRef(null);
+
+  const handleCopy = () => {
+    setLoading(true);
+    const cardNode = ReactDOM.findDOMNode(timeRef.current);
+  
+    if (cardNode instanceof HTMLElement) {
+      const content = cardNode.innerHTML;
+      const formattedText = content.replace(/<\/(p|div|h6)\s*>/gi, '\n');
+      const textContent = formattedText.replace(/<[^>]+>/g, '');
+  
+      setHtmlContent(textContent);
+      navigator.clipboard.writeText(textContent)
+        .then(() => {
+          setTimeout(() => {
+            setLoading(false);
+            setOpenMessage(true);
+          }, 600);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.error('Error copying text:', error);
+        });
+    }
+  }
+
+  const handleClose = () => {
+    setOpenMessage(false);
+  }
+
   return (
     <>
       <Typography variant="h5" gutterBottom sx={{display: 'flex', justifyContent: 'space-between'}}>
         Timing
       </Typography>
-      <Grid container spacing={3} sx={{ mt: 1 }}>
+      <Grid container spacing={3}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Grid item xs={12}>
           <TimeField
@@ -138,8 +176,10 @@ const TimeDetailsComponent: React.FC = () => {
             }}
             sx={{
               '& input': {
-                height: '30px',
+                width: '100%',
+                height: '15px',
                 padding: '10px',
+                fontSize: '12px'
               },
             }}
             slots={{
@@ -161,8 +201,10 @@ const TimeDetailsComponent: React.FC = () => {
             }}
             sx={{
               '& input': {
-                height: '30px',
+                width: '100%',
+                height: '15px',
                 padding: '10px',
+                fontSize: '12px'
               },
             }}
             slots={{
@@ -185,8 +227,9 @@ const TimeDetailsComponent: React.FC = () => {
             sx={{
               '& input': {
                 width: '100%',
-                height: '30px',
+                height: '15px',
                 padding: '10px',
+                fontSize: '12px'
               },
             }}
             slots={{
@@ -224,10 +267,10 @@ const TimeDetailsComponent: React.FC = () => {
           /> */}
         </Grid>
         <Button
-          variant="outlined"
+          variant="contained"
           startIcon={<AddCircleOutlined />}
-          size='medium'
-          sx={{ ml: 3, mt: 1 }}
+          size='small'
+          sx={{ ml: 3, mt: 2 }}
           onClick={handleAddRow}
           >
           Break
@@ -244,8 +287,9 @@ const TimeDetailsComponent: React.FC = () => {
               sx={{
                 '& input': {
                   width: '100%',
-                  height: '30px',
+                  height: '15px',
                   padding: '10px',
+                  fontSize: '12px'
                 },
               }}
               slots={{
@@ -268,8 +312,9 @@ const TimeDetailsComponent: React.FC = () => {
               sx={{
                 '& input': {
                   width: '100%',
-                  height: '30px',
+                  height: '15px',
                   padding: '10px',
+                  fontSize: '12px'
                 },
               }}
               slots={{
@@ -323,8 +368,10 @@ const TimeDetailsComponent: React.FC = () => {
             }}
             sx={{
               '& input': {
-                height: '30px',
+                width: '100%',
+                height: '15px',
                 padding: '10px',
+                fontSize: '12px'
               },
             }}
             slots={{
@@ -348,9 +395,9 @@ const TimeDetailsComponent: React.FC = () => {
       >
         <Grid item sm={12} md={4}>
           <Button
-            variant="outlined"
+            variant="contained"
             color='success'
-            size='medium'
+            size='small'
             startIcon={<CalculateOutlined />}
             onClick={calculateTime}
           >
@@ -359,29 +406,41 @@ const TimeDetailsComponent: React.FC = () => {
         </Grid>
         <Grid item sm={12} md={4}>
           <Button
-            variant="outlined"
+            variant="contained"
             color='warning'
-            size='medium'
-            startIcon={<ContentCopy />}
+            size='small'
+            disabled={loading}
+            onClick={handleCopy}
+            startIcon={loading ? <CircularProgress size={20} /> : <ContentCopy />}
           >
             Copy Time
           </Button>
         </Grid>
         <Grid item sm={12} md={4}>
           <Button
-              variant="outlined"
+              variant="contained"
               color='error'
-              size='medium'
+              size='small'
               startIcon={<RestoreOutlined />}
               onClick={resetReportTime}
             >
             Reset Time
           </Button>
         </Grid>
-        <Grid item md={12} sx={{ p: 1, mt: 1 }}>
+        <Grid item md={12} sx={{ p: 1, mt: 1 }} ref={timeRef}>
           {totalReportingTime}
         </Grid>
       </Grid>
+      <Snackbar
+        open={openMessage}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleClose} severity="success">
+          Time copied successfully!
+        </Alert>
+      </Snackbar>
     </>
   )
 }
