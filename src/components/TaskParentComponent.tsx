@@ -115,14 +115,17 @@ const TaskParentComponent: React.FC = () => {
                   sx={{ 
                     width: 350,
                     '& .MuiInputBase-input': {
-                      height: '5px',
+                      width: '100%',
+                      height: '15px',
+                      padding: '10px',
+                      fontSize: '14px'
                     },
                   }}
                 />
                 <Button
                   variant="outlined"
                   startIcon={<AddCircleOutlined />}
-                  size='medium'
+                  size='small'
                   sx={{ ml: 3 }}
                   onClick={() => addTaskField(field.projectId)}
                   >
@@ -141,7 +144,10 @@ const TaskParentComponent: React.FC = () => {
                       sx={{
                         width: '100%',
                         '& .MuiInputBase-input': {
-                          height: '5px',
+                          width: '100%',
+                          height: '15px',
+                          padding: '10px',
+                          fontSize: '13px'
                         },
                       }}
                       onChange={(e) => handleFieldChange(task.id, field.projectId, e.target.value)}

@@ -8,14 +8,12 @@ import Cookies from 'js-cookie';
 const HeaderComponent: React.FC = () => {
 
   const [editHeader, setEditHeader] = useState(false)
-  const [salutationHeading, setSalutationHeading] = useState('')
-  const [salutationSubtitle, setSalutationSubtitle] = useState('')
-  const dispatch = useDispatch()
+
   const headerText = useSelector((state: RootState) => state.headerText)
 
-  const dailyReportCookies = Cookies.get('dailyReport')
-
-  console.log('dailyReportCookies', dailyReportCookies)
+  const [salutationHeading, setSalutationHeading] = useState(headerText.title)
+  const [salutationSubtitle, setSalutationSubtitle] = useState(headerText.subTitle)
+  const dispatch = useDispatch()
 
   const handleSalutationHeadingChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSalutationHeading(e.target.value);

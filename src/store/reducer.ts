@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dayjs } from 'dayjs';
+import Cookies from 'js-cookie';
 
 export interface projectFields {
   id: string;
@@ -43,29 +44,39 @@ export interface RootState {
 
 const uniqueId = Math.random().toString(36).substring(7)
 
-const initialState: RootState = {
-  headerText: {
-    title: 'Good Evening Sir,',
-    subTitle: 'Today I`ve worked on following Projects',
-  },
-  projects: [
-    {
-      projectId: uniqueId,
-      projectHeading: 'Project Heading',
-      task: [{
-        id: uniqueId,
-        value: ''
-      }],
-    }
-  ],
-  localTime: {
-    startTime: null,
-    totalLunchTime: 0,
-    totalBreakTime: 0,
-    endTime: null,
-    totalFullTime: 0,
-    finalTime: 0
+const cookiesStorage = Cookies.get('dailyReport')
+
+const dailyReportCookies = cookiesStorage ?  JSON.parse(cookiesStorage) : ''
+
+const reportHeader = {
+  title: 'Good Evening Sir,',
+  subTitle: 'Today I`ve worked on following Projects',
+}
+
+const reportProjects = [
+  {
+    projectId: uniqueId,
+    projectHeading: 'Project Heading',
+    task: [{
+      id: uniqueId,
+      value: ''
+    }],
   }
+]
+
+const reportTime = {
+  startTime: null,
+  totalLunchTime: 0,
+  totalBreakTime: 0,
+  endTime: null,
+  totalFullTime: 0,
+  finalTime: 0
+}
+
+const initialState: RootState = {
+  headerText: dailyReportCookies.headerText ? dailyReportCookies.headerText : reportHeader,
+  projects: dailyReportCookies.projects ? dailyReportCookies.projects : reportProjects,
+  localTime: reportTime
 };
 
 const headerSlice = createSlice({

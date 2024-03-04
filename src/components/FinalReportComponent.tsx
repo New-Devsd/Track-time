@@ -73,7 +73,7 @@ const FinalReportComponent: React.FC = () => {
         title="Daily Report"
         action={
           <Button
-            variant="outlined"
+            variant="contained"
             size='small'
             disabled={loading}
             onClick={handleCopy}
