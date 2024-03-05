@@ -18,8 +18,9 @@ import {
 import React, { ReactElement, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { saveLocalTime } from '../store/reducer';
-import { LocalizationProvider, TimeField } from '@mui/x-date-pickers';
+import { LocalizationProvider, TimeField, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 import ReactDOM from 'react-dom';
 
@@ -168,33 +169,28 @@ const TimeDetailsComponent: React.FC = () => {
       <Grid container spacing={3}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Grid item xs={12}>
-          <TimeField
-            label="Start Time"
-            value={startTime}
-            onChange={(newValue) => {
-              setStartTime(newValue);
-            }}
-            sx={{
-              '& input': {
-                width: '100%',
-                height: '15px',
-                padding: '10px',
-                fontSize: '12px'
-              },
-            }}
-            slots={{
-              textField: textFieldProps => <TextField
-                fullWidth
-                variant="outlined"
-                InputLabelProps={{ shrink: true }}
-                {...textFieldProps}
-              />
-            }}
-          />
+          <DemoContainer components={['TimePicker']}>
+            <TimePicker
+              label="Start Time"
+              value={startTime}
+              onChange={(newValue) => {
+                setStartTime(newValue);
+              }}
+              sx={{
+                '& input': {
+                  width: '100%',
+                  height: '20px',
+                  padding: '10px',
+                  fontSize: '12px'
+                },
+                width: '100%'
+              }}
+            />
+          </DemoContainer>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <TimeField
-            label="Lunch Start Time"
+          <TimePicker
+            label="Lunch Start"
             value={lunchStartTime}
             onChange={(newValue) => {
               setLunchStartTime(newValue);
@@ -206,20 +202,15 @@ const TimeDetailsComponent: React.FC = () => {
                 padding: '10px',
                 fontSize: '12px'
               },
-            }}
-            slots={{
-              textField: textFieldProps => <TextField
-                fullWidth
-                variant="outlined"
-                InputLabelProps={{ shrink: true }}
-                {...textFieldProps}
-              />
+              '& label': {
+                fontSize: '13px'
+              }
             }}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
-          <TimeField
-            label="Lunch End Time"
+          <TimePicker
+            label="Lunch End"
             value={lunchEndTime}
             onChange={(newValue) => {
               setLunchEndTime(newValue);
@@ -231,14 +222,10 @@ const TimeDetailsComponent: React.FC = () => {
                 padding: '10px',
                 fontSize: '12px'
               },
-            }}
-            slots={{
-              textField: textFieldProps => <TextField
-                fullWidth
-                variant="outlined"
-                InputLabelProps={{ shrink: true }}
-                {...textFieldProps}
-              />
+              '& label': {
+                fontSize: '13px',
+                textAlign: 'center'
+              }
             }}
           />
         </Grid>
@@ -278,7 +265,7 @@ const TimeDetailsComponent: React.FC = () => {
         {timeRows.map((row, index) => (
         <Grid container spacing={2} key={index} sx={{ m: 1 }}>
           <Grid item xs={12} sm={4}>
-            <TimeField
+            <TimePicker
               label="Start Time"
               value={row.startTime}
               onChange={(newValue) => {
@@ -292,18 +279,10 @@ const TimeDetailsComponent: React.FC = () => {
                   fontSize: '12px'
                 },
               }}
-              slots={{
-                textField: textFieldProps => <TextField
-                  fullWidth
-                  variant="outlined"
-                  InputLabelProps={{ shrink: true }}
-                  {...textFieldProps}
-                />
-              }}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TimeField
+            <TimePicker
               label="End Time"
               value={row.endTime}
               onChange={(newValue) => {
@@ -316,14 +295,6 @@ const TimeDetailsComponent: React.FC = () => {
                   padding: '10px',
                   fontSize: '12px'
                 },
-              }}
-              slots={{
-                textField: textFieldProps => <TextField
-                  fullWidth
-                  variant="outlined"
-                  InputLabelProps={{ shrink: true }}
-                  {...textFieldProps}
-                />
               }}
             />
           </Grid>
@@ -360,7 +331,7 @@ const TimeDetailsComponent: React.FC = () => {
         </Grid>
       ))}
         <Grid item xs={12}>
-          <TimeField
+          <TimePicker
             label="End Time"
             value={endTime}
             onChange={(newValue) => {
@@ -373,14 +344,7 @@ const TimeDetailsComponent: React.FC = () => {
                 padding: '10px',
                 fontSize: '12px'
               },
-            }}
-            slots={{
-              textField: textFieldProps => <TextField
-                fullWidth
-                variant="outlined"
-                InputLabelProps={{ shrink: true }}
-                {...textFieldProps}
-              />
+              width: '100%'
             }}
           />
         </Grid>
