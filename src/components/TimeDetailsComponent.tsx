@@ -33,11 +33,11 @@ interface TimeRow {
 const TimeDetailsComponent: React.FC = () => {
 
   const [timeRows, setTimeRows] = useState<TimeRow[]>([])
-  const [startTime, setStartTime] = useState<Dayjs | null>(null)
+  const [startTime, setStartTime] = useState<Dayjs | null>(dayjs('2022-04-17T10:30'))
   const [lunchStartTime, setLunchStartTime] = useState<Dayjs | null>(null)
   const [lunchEndTime, setLunchEndTime] = useState<Dayjs | null>(null)
   const [lunchManualTime, setLunchManualTime] = useState<Dayjs | null>(null)
-  const [endTime, setEndTime] = useState<Dayjs | null>(null)
+  const [endTime, setEndTime] = useState<Dayjs | null>(dayjs('2022-04-17T19:30'))
   const [totalReportingTime, setTotalReportingTime] = useState<ReactElement | undefined>()
 
   const dispatch = useDispatch()
@@ -120,11 +120,11 @@ const TimeDetailsComponent: React.FC = () => {
   }
 
   const resetReportTime = () => {
-    setStartTime(null)
+    setStartTime(dayjs('2022-04-17T10:30'))
     setLunchStartTime(null)
     setLunchEndTime(null)
     setLunchManualTime(null)
-    setEndTime(null)
+    setEndTime(dayjs('2022-04-17T19:30'))
   }
 
   const [loading, setLoading] = useState(false)
@@ -198,7 +198,7 @@ const TimeDetailsComponent: React.FC = () => {
             sx={{
               '& input': {
                 width: '100%',
-                height: '15px',
+                height: '20px',
                 padding: '10px',
                 fontSize: '12px'
               },
@@ -218,13 +218,12 @@ const TimeDetailsComponent: React.FC = () => {
             sx={{
               '& input': {
                 width: '100%',
-                height: '15px',
+                height: '20px',
                 padding: '10px',
                 fontSize: '12px'
               },
               '& label': {
                 fontSize: '13px',
-                textAlign: 'center'
               }
             }}
           />
@@ -274,7 +273,7 @@ const TimeDetailsComponent: React.FC = () => {
               sx={{
                 '& input': {
                   width: '100%',
-                  height: '15px',
+                  height: '20px',
                   padding: '10px',
                   fontSize: '12px'
                 },
@@ -291,7 +290,7 @@ const TimeDetailsComponent: React.FC = () => {
               sx={{
                 '& input': {
                   width: '100%',
-                  height: '15px',
+                  height: '20px',
                   padding: '10px',
                   fontSize: '12px'
                 },
@@ -340,7 +339,7 @@ const TimeDetailsComponent: React.FC = () => {
             sx={{
               '& input': {
                 width: '100%',
-                height: '15px',
+                height: '20px',
                 padding: '10px',
                 fontSize: '12px'
               },
