@@ -22,6 +22,10 @@ export interface localTime {
   finalTime: number
 }
 
+export interface viewType {
+  type: string;
+}
+
 export interface RootState {
   headerText: {
     title: string;
@@ -39,7 +43,8 @@ export interface RootState {
     endTime: Dayjs | null,
     totalFullTime: number,
     finalTime: number
-  }
+  },
+  viewType: {}
 }
 
 const uniqueId = Math.random().toString(36).substring(7)
@@ -73,10 +78,13 @@ const reportTime = {
   finalTime: 0
 }
 
+const defaultViewType = 'time'
+
 const initialState: RootState = {
   headerText: dailyReportCookies.headerText ? dailyReportCookies.headerText : reportHeader,
   projects: dailyReportCookies.projects ? dailyReportCookies.projects : reportProjects,
-  localTime: reportTime
+  localTime: reportTime,
+  viewType: defaultViewType,
 };
 
 const headerSlice = createSlice({
@@ -94,9 +102,12 @@ const headerSlice = createSlice({
     },
     saveLocalTime: (state, action: PayloadAction<localTime>) => {
       state.localTime = action.payload
+    },
+    saveViewType: (state, action: PayloadAction<viewType>) => {
+      state.viewType = action.payload
     }
   },
 });
 
-export const { saveProjects, saveHeader, deleteProjects, saveLocalTime } = headerSlice.actions;
+export const { saveProjects, saveHeader, deleteProjects, saveLocalTime, saveViewType } = headerSlice.actions;
 export default headerSlice.reducer;

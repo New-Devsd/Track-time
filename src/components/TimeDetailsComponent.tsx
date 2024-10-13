@@ -7,6 +7,7 @@ import {
 } from '@mui/icons-material';
 import {
   Alert,
+  Box,
   Button,
   CircularProgress,
   Grid,
@@ -16,8 +17,8 @@ import {
   Typography
 } from '@mui/material';
 import React, { ReactElement, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { saveLocalTime } from '../store/reducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, saveLocalTime } from '../store/reducer';
 import { LocalizationProvider, TimeField, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -39,6 +40,8 @@ const TimeDetailsComponent: React.FC = () => {
   const [lunchManualTime, setLunchManualTime] = useState<Dayjs | null>(null)
   const [endTime, setEndTime] = useState<Dayjs | null>(dayjs('2022-04-17T19:30'))
   const [totalReportingTime, setTotalReportingTime] = useState<ReactElement | undefined>()
+
+  const viewType = useSelector((state: RootState) => state.viewType)
 
   const dispatch = useDispatch()
 
@@ -161,8 +164,12 @@ const TimeDetailsComponent: React.FC = () => {
     setOpenMessage(false);
   }
 
+  const fullView = () => {
+    return viewType === 'time' ? true : false
+  }
+
   return (
-    <>
+    <Box sx={{ px: fullView() ? 10 : 1, py: fullView() ? 5 : 1 }}>
       <Typography variant="h5" gutterBottom sx={{display: 'flex', justifyContent: 'space-between'}}>
         Timing
       </Typography>
@@ -179,9 +186,9 @@ const TimeDetailsComponent: React.FC = () => {
               sx={{
                 '& input': {
                   width: '100%',
-                  height: '20px',
+                  height: fullView() ? '30px' : '20px',
                   padding: '10px',
-                  fontSize: '12px'
+                  fontSize: fullView() ? '15px' : '12px'
                 },
                 width: '100%'
               }}
@@ -198,9 +205,9 @@ const TimeDetailsComponent: React.FC = () => {
             sx={{
               '& input': {
                 width: '100%',
-                height: '20px',
+                height: fullView() ? '30px' : '20px',
                 padding: '10px',
-                fontSize: '12px'
+                fontSize: fullView() ? '15px' : '12px'
               },
               '& label': {
                 fontSize: '13px'
@@ -218,9 +225,9 @@ const TimeDetailsComponent: React.FC = () => {
             sx={{
               '& input': {
                 width: '100%',
-                height: '20px',
+                height: fullView() ? '30px' : '20px',
                 padding: '10px',
-                fontSize: '12px'
+                fontSize: fullView() ? '15px' : '12px'
               },
               '& label': {
                 fontSize: '13px',
@@ -273,9 +280,9 @@ const TimeDetailsComponent: React.FC = () => {
               sx={{
                 '& input': {
                   width: '100%',
-                  height: '20px',
+                  height: fullView() ? '30px' : '20px',
                   padding: '10px',
-                  fontSize: '12px'
+                  fontSize: fullView() ? '15px' : '12px'
                 },
               }}
             />
@@ -290,9 +297,9 @@ const TimeDetailsComponent: React.FC = () => {
               sx={{
                 '& input': {
                   width: '100%',
-                  height: '20px',
+                  height: fullView() ? '30px' : '20px',
                   padding: '10px',
-                  fontSize: '12px'
+                  fontSize: fullView() ? '15px' : '12px'
                 },
               }}
             />
@@ -339,9 +346,9 @@ const TimeDetailsComponent: React.FC = () => {
             sx={{
               '& input': {
                 width: '100%',
-                height: '20px',
+                height: fullView() ? '30px' : '20px',
                 padding: '10px',
-                fontSize: '12px'
+                fontSize: fullView() ? '15px' : '12px'
               },
               width: '100%'
             }}
@@ -352,26 +359,27 @@ const TimeDetailsComponent: React.FC = () => {
       <Grid
         container
         direction="row"
-        justifyContent="space-between"
+        justifyContent="space-evenly"
+        alignItems="center"
         spacing={3}
-        sx={{ my: 1 }}
+        sx={{ m: 1 }}
       >
-        <Grid item sm={12} md={4}>
+        <Grid item xl={4}>
           <Button
             variant="contained"
             color='success'
-            size='small'
+            size={fullView() ? 'medium' : 'small'}
             startIcon={<CalculateOutlined />}
             onClick={calculateTime}
           >
             Calculate
           </Button>
         </Grid>
-        <Grid item sm={12} md={4}>
+        <Grid item xl={4}>
           <Button
             variant="contained"
             color='warning'
-            size='small'
+            size={fullView() ? 'medium' : 'small'}
             disabled={loading}
             onClick={handleCopy}
             startIcon={loading ? <CircularProgress size={20} /> : <ContentCopy />}
@@ -379,11 +387,11 @@ const TimeDetailsComponent: React.FC = () => {
             Copy Time
           </Button>
         </Grid>
-        <Grid item sm={12} md={4}>
+        <Grid item xl={4}>
           <Button
               variant="contained"
               color='error'
-              size='small'
+              size={fullView() ? 'medium' : 'small'}
               startIcon={<RestoreOutlined />}
               onClick={resetReportTime}
             >
@@ -404,7 +412,7 @@ const TimeDetailsComponent: React.FC = () => {
           Time copied successfully!
         </Alert>
       </Snackbar>
-    </>
+    </Box>
   )
 }
 
