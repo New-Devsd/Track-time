@@ -113,7 +113,7 @@ const TaskParentComponent: React.FC = () => {
                     shrink: true,
                   }}
                   sx={{ 
-                    width: 350,
+                    width: { lg: 350, sm: 180},
                     '& .MuiInputBase-input': {
                       width: '100%',
                       height: '15px',
